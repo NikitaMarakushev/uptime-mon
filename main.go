@@ -15,20 +15,22 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+type Target struct {
+	Name string `yaml:"name"`
+	URL  string `yaml:"url"`
+}
+
 type Config struct {
 	Telegram struct {
 		BotToken string `yaml:"bot_token"`
 		ChatID   string `yaml:"chat_id"`
 	} `yaml:"telegram"`
-	CheckInterval int `yaml:"check_interval_seconds"`
-	Targets       []struct {
-		Name string `yaml:"name"`
-		URL  string `yaml:"url"`
-	} `yaml:"targets"`
+	CheckInterval int      `yaml:"check_interval_seconds"`
+	Targets       []Target `yaml:"targets"`
 }
 
 type Monitor struct {
-	config Config
+	config    Config
 	downState map[string]bool
 	mu        sync.RWMutex
 }
@@ -52,11 +54,11 @@ func init() {
 func main() {
 	configData, err := os.ReadFile("config.yaml")
 	if err != nil {
-		log.Fatalf("Не удалось прочитать config.yaml: %v", err)
+		log.Fatalf("Cannot read config.yaml: %v", err)
 	}
 	var cfg Config
 	if err := yaml.Unmarshal(configData, &cfg); err != nil {
-		log.Fatalf("Ошибка парсинга YAML: %v", err)
+		log.Fatalf("YAML parsing error: %v", err)
 	}
 
 	monitor := &Monitor{
@@ -64,11 +66,11 @@ func main() {
 		downState: make(map[string]bool),
 	}
 
-	log.Printf("Запущен Uptime Monitor. Интервал: %d сек. Целей: %d", cfg.CheckInterval, len(cfg.Targets))
+	log.Printf("Runned Uptime Monitor. Interval: %d сек. Goals: %d", cfg.CheckInterval, len(cfg.Targets))
 
 	go func() {
 		http.Handle("/metrics", promhttp.Handler())
-		log.Println("📊 Метрики доступны на http://localhost:9116/metrics")
+		log.Println("Metrics are avaliable: http://localhost:9116/metrics")
 		log.Fatal(http.ListenAndServe(":9116", nil))
 	}()
 
@@ -86,7 +88,8 @@ func (m *Monitor) checkAll() {
 
 	for _, target := range m.config.Targets {
 		wg.Add(1)
-		go func(t struct{ Name, URL string }) {
+
+		go func(t Target) {
 			defer wg.Done()
 			m.checkTarget(t)
 		}(target)
@@ -95,7 +98,7 @@ func (m *Monitor) checkAll() {
 	wg.Wait()
 }
 
-func (m *Monitor) checkTarget(target struct{ Name, URL string }) {
+func (m *Monitor) checkTarget(target Target) {
 	start := time.Now()
 
 	client := &http.Client{
@@ -124,7 +127,7 @@ func (m *Monitor) checkTarget(target struct{ Name, URL string }) {
 	}
 
 	m.mu.Lock()
-prevState := m.downState[target.URL]
+	prevState := m.downState[target.URL]
 	if prevState != isDown {
 		m.downState[target.URL] = isDown
 		if isDown {
@@ -138,15 +141,15 @@ prevState := m.downState[target.URL]
 
 func (m *Monitor) sendTelegramAlert(name, url, status string, err error) {
 	if m.config.Telegram.BotToken == "" || m.config.Telegram.ChatID == "" {
-		log.Println("Telegram не настроен, пропускаем отправку алерта")
+		log.Println("Telegram is not set up, skip alert sending")
 		return
 	}
 
-	msg := fmt.Sprintf("*%s* %s\n URL: `%s`\n Время: %s", 
+	msg := fmt.Sprintf("*%s* %s\n URL: `%s`\n Время: %s",
 		name, status, url, time.Now().Format("15:04:05"))
-	
+
 	if err != nil {
-		msg += fmt.Sprintf("\n Ошибка: `%v`", err)
+		msg += fmt.Sprintf("\n Error: `%v`", err)
 	}
 
 	payload := map[string]string{
@@ -161,14 +164,14 @@ func (m *Monitor) sendTelegramAlert(name, url, status string, err error) {
 
 	resp, err := http.Post(apiURL, "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
-		log.Printf("Ошибка отправки в Telegram: %v", err)
+		log.Printf("Error sending in Telegram: %v", err)
 		return
 	}
 	defer resp.Body.Close()
-	
+
 	if resp.StatusCode == 200 {
-		log.Printf("Алерт отправлен в Telegram: %s %s", name, status)
+		log.Printf("Alert sent Telegram: %s %s", name, status)
 	} else {
-		log.Printf("Telegram вернул статус %d", resp.StatusCode)
+		log.Printf("Telegram returned status %d", resp.StatusCode)
 	}
 }

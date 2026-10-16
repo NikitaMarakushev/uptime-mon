@@ -1,6 +1,6 @@
 telegram:
-  bot_token: ""
-  chat_id: ""
+  bot_token: "123456:abc"
+  chat_id: "abc"
 
 check_interval_seconds: 10
 
@@ -9,5 +9,5 @@ targets:
     url: "https://google.com"
   - name: "GitHub"
     url: "https://github.com"
-  - name: "My Broken Site"
-    url: "https://this-domain-does-not-exist-12345.com"
+  - name: "test"
+    url: "https://test.z"
