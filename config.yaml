@@ -1,0 +1,13 @@
+telegram:
+  bot_token: "123456:abc"
+  chat_id: "abc"
+
+check_interval_seconds: 10
+
+targets:
+  - name: "Google"
+    url: "https://google.com"
+  - name: "GitHub"
+    url: "https://github.com"
+  - name: "test"
+    url: "https://test.z"
