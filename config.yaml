@@ -1,0 +1,13 @@
+telegram:
+  bot_token: ""
+  chat_id: ""
+
+check_interval_seconds: 10
+
+targets:
+  - name: "Google"
+    url: "https://google.com"
+  - name: "GitHub"
+    url: "https://github.com"
+  - name: "My Broken Site"
+    url: "https://this-domain-does-not-exist-12345.com"
