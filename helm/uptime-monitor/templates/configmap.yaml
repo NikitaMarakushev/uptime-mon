@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "uptime-monitor.fullname" . }}-config
+  labels:
+    {{- include "uptime-monitor.labels" . | nindent 4 }}
+data:
+  config.yaml: |
+    telegram:
+      bot_token: "{{ .Values.config.telegram.bot_token }}"
+      chat_id: "{{ .Values.config.telegram.chat_id }}"
+    check_interval_seconds: {{ .Values.config.check_interval_seconds }}
+    targets:
+    {{- range .Values.config.targets }}
+      - name: "{{ .name }}"
+        url: "{{ .url }}"
+    {{- end }}

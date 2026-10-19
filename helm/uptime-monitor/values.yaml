@@ -1,0 +1,39 @@
+replicaCount: 1
+
+image:
+  repository: uptime-monitor
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+nameOverride: ""
+fullnameOverride: ""
+
+config:
+  telegram:
+    bot_token: "YOUR_BOT_TOKEN"
+    chat_id: "YOUR_CHAT_ID"
+  check_interval_seconds: 15
+  targets:
+    - name: "Google"
+      url: "https://google.com"
+    - name: "GitHub"
+      url: "https://github.com"
+    - name: "Yandex"
+      url: "https://yandex.ru"
+
+service:
+  type: ClusterIP
+  port: 9116
+  targetPort: 9116
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
