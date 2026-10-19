@@ -28,12 +28,11 @@ jobs:
       - name: Download dependencies
         run: go mod download
 
-      - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@v6
-        with:
-          version: latest
-          install-mode: golangci-lint
-          args: --out-format=colored-line-number
+      - name: Run golangci-lint natively
+        run: |
+          echo "Installing golangci-lint for Go $(go version)"
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+          $(go env GOPATH)/bin/golangci-lint run --out-format=colored-line-number ./...
 
       - name: Run Unit Tests
         run: go test -v -race -cover ./...
