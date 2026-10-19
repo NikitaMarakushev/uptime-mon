@@ -1,20 +1,20 @@
-# 🔍 Uptime Monitor
+# Uptime Monitor
 
 A simple and efficient HTTP/HTTPS service availability monitor with Telegram alerts and Prometheus metrics.
 
 Written in Go, demonstrating goroutines, channels, HTTP clients, and external API integration.
 
-## ✨ Features
+## Features
 
-- ✅ Parallel URL checking (goroutines)
-- ✅ Smart Telegram alerts (only on state change: UP ↔ DOWN)
-- ✅ Prometheus metrics export
-- ✅ Flexible YAML configuration
-- ✅ Configurable timeouts and check intervals
-- ✅ Graceful shutdown (handles SIGTERM correctly)
-- ✅ Compact binary with no external dependencies
+- Parallel URL checking (goroutines)
+- Smart Telegram alerts (only on state change: UP ↔ DOWN)
+- Prometheus metrics export
+- Flexible YAML configuration
+- Configurable timeouts and check intervals
+- Graceful shutdown (handles SIGTERM correctly)
+- Compact binary with no external dependencies
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Installation
 
@@ -38,3 +38,10 @@ go run main.go
 1. telegram.bot_token - is a token from BotFather
 2. telegram.chat_id - is your id, for example, use @userinfobot to get
 3. You can use default targets as example and add your own
+
+## Docker
+
+### Build the image
+
+```bash
+docker build -t uptime-monitor:latest .

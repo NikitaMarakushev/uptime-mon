@@ -1,0 +1,36 @@
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+uptime-monitor
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Dependencies
+vendor/
+
+# Test files
+*_test.go
+test/
+
+# Documentation
+README.md
+LICENSE
+
+# Local config with secrets
+config.yaml
+config.local.yaml
+.env
