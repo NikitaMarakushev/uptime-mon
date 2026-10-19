@@ -1,0 +1,15 @@
+🎉 Uptime Monitor has been deployed!
+
+1. Get the application URL by running:
+  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "uptime-monitor.name" . }},app.kubernetes.io/instance={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
+  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 9116:{{ .Values.service.targetPort }}
+
+2. View Prometheus metrics:
+  curl http://localhost:9116/metrics
+
+3. Check application logs:
+  kubectl logs -l app.kubernetes.io/name={{ include "uptime-monitor.name" . }} -f
+
+Configuration:
+  - Check interval: {{ .Values.config.check_interval_seconds }}s
+  - Targets: {{ len .Values.config.targets }}
