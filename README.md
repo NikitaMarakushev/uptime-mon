@@ -1,3 +1,5 @@
+![CI/CD Status](https://github.com/NikitaMarakushev/uptime-mon/actions/workflows/ci.yaml/badge.svg?branch=master)
+
 # Uptime Monitor
 
 A simple and efficient HTTP/HTTPS service availability monitor with Telegram alerts and Prometheus metrics.
